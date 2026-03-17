@@ -1,20 +1,20 @@
 public class Record
 {
-    public int CardNumber { get; set; }
-    public string LastName { get; set; }
-    public string FirstName { get; set; }
-    public string District { get; set; }
+    public string ReservationCode { get; set; }
+    public string PassengerSurname { get; set; }
+    public string SeatClass { get; set; }
+    public double BaggageWeight { get; set; }
 
-    public Record(int cardNumber, string lastName, string firstName, string district)
+    public Record(string reservationCode, string passengerSurname, string seatClass, double baggageWeight)
     {
-        CardNumber = cardNumber;
-        LastName = lastName;
-        FirstName = firstName;
-        District = district;
+        ReservationCode = reservationCode;
+        PassengerSurname = passengerSurname;
+        SeatClass = seatClass;
+        BaggageWeight = baggageWeight;
     }
 
     public override string ToString()
     {
-        return $"Картка: {CardNumber} | Прізвище: {LastName} | Ім'я: {FirstName} | Район: {District}";
+        return $"Бронь: {ReservationCode} | Прізвище: {PassengerSurname} | Клас: {SeatClass} | Вага багажу: {BaggageWeight}";
     }
 }

@@ -9,14 +9,13 @@
             Console.WriteLine("\n---------- ГОЛОВНА ----------");
             Console.WriteLine("1. Очистити колекцію");
             Console.WriteLine("2. Згенерувати контрольні дані (11 елементів)");
-            Console.WriteLine("3. Додати пацієнта вручну");
-            Console.WriteLine("4. Видалити пацієнта за номером картки");
+            Console.WriteLine("3. Додати пасажира вручну");
+            Console.WriteLine("4. Видалити пасажира за номером броні");
             Console.WriteLine("5. Вивести поточний список");
-            Console.WriteLine("6. Відсортувати список за прізвищем (Merge Sort)");
-            Console.WriteLine("7. Вивести проміжні кроки сортування");
-            Console.WriteLine("8. Вивести статистику сортування");
-            Console.WriteLine("9. Знайти пацієнтів за першою літерою прізвища");
-            Console.WriteLine("10. Статистика пацієнтів по районах");
+            Console.WriteLine("6. Відсортувати список за спаданням ваги (QuickSort)");
+            Console.WriteLine("7. Вивести статистику сортування");
+            Console.WriteLine("8. Вивести топ-5 пасажирів із найбільшим багажем");
+            Console.WriteLine("9. Вивести пасажирів, що перевищили норму багажу (понад 20 кг)");
             Console.WriteLine("0. Вихід");
             Console.Write("Оберіть дію: ");
 
@@ -34,7 +33,7 @@
             else if (choice == "3")
             {
                 ConsoleUsing.AddRecordMenu(sorter);
-                Console.WriteLine("Пацієнта додано.");
+                Console.WriteLine("Пасажира додано.");
             }
             else if (choice == "4")
             {
@@ -50,19 +49,15 @@
             }
             else if (choice == "7")
             {
-                sorter.PrintIntermediateSteps();
+                sorter.PrintStatistics();
             }
             else if (choice == "8")
             {
-                sorter.PrintStatistics();
+                sorter.PrintTop5Heaviest();
             }
             else if (choice == "9")
             {
-                ConsoleUsing.SearchByLetterMenu(sorter);
-            }
-            else if (choice == "10")
-            {
-                sorter.CountPatientsByDistrict();
+                sorter.PrintOverWeightPassengers();
             }
             else if (choice == "0")
             {

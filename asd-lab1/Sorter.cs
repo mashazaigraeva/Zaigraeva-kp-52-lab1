@@ -22,18 +22,18 @@ public class Sorter
         collection.Add(record);
     }
 
-    public void RemoveRecord(int cardNumber)
+    public void RemoveRecord(string reservationCode)
     {
         for (int i = 0; i < collection.Count; i++)
         {
-            if (collection[i].CardNumber == cardNumber)
+            if (collection[i].ReservationCode == reservationCode)
             {
                 collection.RemoveAt(i);
-                Console.WriteLine("Пацієнта видалено.");
+                Console.WriteLine("Пасажира видалено.");
                 return;
             }
         }
-        Console.WriteLine("Пацієнта з такою карткою не знайдено.");
+        Console.WriteLine("Пасажира з такою броню не знайдено.");
     }
 
     public void PrintCollection()
@@ -46,154 +46,169 @@ public class Sorter
 
         for (int i = 0; i < collection.Count; i++)
         {
-            Console.WriteLine(collection[i].ToString());
+            Console.WriteLine(collection[i]);
         }
     }
 
     public void GenerateControlData()
     {
         InitCollection();
-        AddRecord(new Record(1, "Шевченко", "Тарас", "Шевченківський"));
-        AddRecord(new Record(2, "Франко", "Іван", "Печерський"));
-        AddRecord(new Record(3, "Українка", "Леся", "Подільський"));
-        AddRecord(new Record(4, "Коцюбинський", "Михайло", "Шевченківський"));
-        AddRecord(new Record(5, "Шевченко", "Андрій", "Дарницький")); 
-        AddRecord(new Record(6, "Стус", "Василь", "Голосіївський"));
-        AddRecord(new Record(7, "Симоненко", "Василь", "Печерський"));
-        AddRecord(new Record(8, "Костенко", "Ліна", "Голосіївський"));
-        AddRecord(new Record(9, "Грушевський", "Михайло", "Подільський"));
-        AddRecord(new Record(10, "Довженко", "Олександр", "Дарницький"));
-        AddRecord(new Record(11, "Хмельницький", "Богдан", "Оболонський"));
+        AddRecord(new Record("A102", "Шевченко", "Бізнес", 20.5));
+        AddRecord(new Record("B103", "Франко", "Економ", 5.0));
+        AddRecord(new Record("C104", "Українка", "Перший", 15.0));
+        AddRecord(new Record("A105", "Коцюбинський", "Економ", 10.0));
+        AddRecord(new Record("B106", "Шевченко", "Економ", 25.9));
+        AddRecord(new Record("C107", "Стус", "Бізнес", 8.0));
+        AddRecord(new Record("A108", "Симоненко", "Перший", 12.3));
+        AddRecord(new Record("B109", "Костенко", "Перший", 18.0));
+        AddRecord(new Record("C110", "Грушевський", "Економ", 15.0));
+        AddRecord(new Record("A111", "Довженко", "Економ", 22.2));
+        AddRecord(new Record("B112", "Хмельницький", "Бізнес", 16.7));
         Console.WriteLine("Контрольні дані згенеровано.");
     }
 
     public void SortCollection()
     {
-        if (collection.Count <= 1)
+        if (collection.Count <= 1) 
         {
             return;
         }
-
+        
         Stats.Reset();
         intermediateSteps.Clear();
-        Record[] arr = collection.ToArray(); 
 
         DateTime startTime = DateTime.Now;
-        MergeSortRecursive(arr, 0, arr.Length - 1);
+        QuickSortRecursive(collection, 0, collection.Count - 1);
         DateTime endTime = DateTime.Now;
         TimeSpan duration = endTime - startTime;
         Stats.ExecutionTimeMs = (long)duration.TotalMilliseconds;
 
-        for (int i = 0; i < arr.Length; i++)
-        {
-            collection[i] = arr[i];
-        }
-        Console.WriteLine("\nСортування завершено!");
+        Console.WriteLine("Сортування завершено.");
     }
 
-    private void MergeSortRecursive(Record[] arr, int left, int right)
+    private void QuickSortRecursive(List<Record> list, int low, int high)
     {
         Stats.RecursiveCalls++;
-
-        if (left < right)
+        if (low < high)
         {
-            int mid = left + (right - left) / 2;
-
-            MergeSortRecursive(arr, left, mid);
-            MergeSortRecursive(arr, mid + 1, right);
-
-            Merge(arr, left, mid, right);
+            int pivotIndex = Partition(list, low, high);
+            
+            QuickSortRecursive(list, low, pivotIndex - 1);
+            QuickSortRecursive(list, pivotIndex + 1, high);
         }
     }
 
-    private void Merge(Record[] arr, int left, int mid, int right)
+    private int Partition(List<Record> list, int low, int high)
     {
-        int n1 = mid - left + 1;
-        int n2 = right - mid;
+        Record pivot = list[high]; 
+        int i = low - 1; 
 
-        Record[] L = new Record[n1];
-        Record[] R = new Record[n2];
-
-        for (int i = 0; i < n1; i++) 
-        { 
-            L[i] = arr[left + i]; 
-            Stats.Copies++; 
-        }
-        for (int j = 0; j < n2; j++) 
-        { 
-            R[j] = arr[mid + 1 + j]; 
-            Stats.Copies++; 
-        }
-
-        int iL = 0;
-        int iR = 0;
-        int k = left;
-
-        while (iL < n1 && iR < n2)
+        for (int j = low; j < high; j++)
         {
             Stats.Comparisons++;
-            int cmp = string.Compare(L[iL].LastName, R[iR].LastName, StringComparison.OrdinalIgnoreCase);
-            
-            if (cmp == 0)
+            if (ShouldComeBefore(list[j], pivot))
             {
-                Stats.Comparisons++;
-                cmp = string.Compare(L[iL].FirstName, R[iR].FirstName, StringComparison.OrdinalIgnoreCase);
+                i++;
+                Record temp1 = list[i];
+                list[i] = list[j];
+                list[j] = temp1;
+                Stats.Copies += 3;
             }
-
-            if (cmp <= 0)
-            {
-                arr[k] = L[iL];
-                iL++;
-            }
-            else
-            {
-                arr[k] = R[iR];
-                iR++;
-            }
-            Stats.Copies++;
-            k++;
         }
-
-        while (iL < n1) 
-        { 
-            arr[k] = L[iL]; 
-            iL++;
-            k++;
-            Stats.Copies++;
-        }
-        while (iR < n2) 
-        { 
-            arr[k] = R[iR];
-            iR++; 
-            k++; 
-            Stats.Copies++; 
-        }
-
-        SaveIntermediateStep(arr, left, right);
+        Record temp2 = list[i + 1];
+        list[i + 1] = list[high];
+        list[high] = temp2;
+        Stats.Copies += 3;
+        
+        return i + 1;
     }
 
-    private void SaveIntermediateStep(Record[] arr, int left, int right)
+    private bool ShouldComeBefore(Record a, Record b)
     {
-        string stepInfo = $"Злиття індексів з {left} по {right}:\n";
-        for (int i = left; i <= right; i++)
+        if (a.BaggageWeight > b.BaggageWeight)
         {
-            stepInfo += $"  {arr[i].LastName} {arr[i].FirstName}\n";
+            return true;
         }
-        intermediateSteps.Add(stepInfo);
-    }
-
-    public void PrintIntermediateSteps()
-    {
-        if (intermediateSteps.Count == 0)
+        if (a.BaggageWeight < b.BaggageWeight) 
         {
-            Console.WriteLine("Немає збережених кроків. Спершу запустіть сортування.");
-            return;
+            return false;
+        }
+        Stats.Comparisons++;
+        if (string.Compare(a.PassengerSurname.ToUpper(), b.PassengerSurname.ToUpper()) < 0) 
+        {
+            return true;
         }
         
-        Console.WriteLine("--- Проміжні кроки злиття (Merge Sort) ---");
-        for (int i = 0; i < intermediateSteps.Count; i++)
+        return false;
+    }
+
+    public void PrintOverWeightPassengers()
+    {
+        Console.WriteLine("Пасажири, що перевищили норму багажу (понад 20 кг):");
+        bool found = false;
+        for (int i = 0; i < collection.Count; i++)
         {
-            Console.WriteLine($"Крок {i + 1}:\n{intermediateSteps[i]}");
+            if (collection[i].BaggageWeight > 20.0) 
+            {
+                Console.WriteLine(collection[i]);
+                found = true;
+            }
+        }
+        if (!found) 
+        {
+            Console.WriteLine("Пасажирів із перевищенням не знайдено.");
+        }
+    }
+
+    public void PrintTop5Heaviest()
+    {
+        Console.WriteLine("Топ-5 пасажирів із найбільшим багажем:");
+        if (collection.Count == 0)
+        {
+            Console.WriteLine("Колекція порожня.");
+            return;
+        }
+
+        List<Record> tempCopy = new List<Record>();
+        for (int i = 0; i < collection.Count; i++)
+        {
+            tempCopy.Add(collection[i]);
+        }
+
+        int limit;
+        if (tempCopy.Count < 5)
+        {
+            limit = tempCopy.Count;
+        }
+        else
+        {
+            limit = 5;
+        }
+
+        for (int i = 0; i < limit; i++)
+        {
+            int maxIndex = i;
+            
+            for (int j = i + 1; j < tempCopy.Count; j++)
+            {
+                if (tempCopy[j].BaggageWeight > tempCopy[maxIndex].BaggageWeight)
+                {
+                    maxIndex = j;
+                }
+                else if (tempCopy[j].BaggageWeight == tempCopy[maxIndex].BaggageWeight)
+                {
+                    if (string.Compare(tempCopy[j].PassengerSurname.ToUpper(), tempCopy[maxIndex].PassengerSurname.ToUpper()) < 0)
+                    {
+                        maxIndex = j;
+                    }
+                }
+            }
+
+            Record temp = tempCopy[i];
+            tempCopy[i] = tempCopy[maxIndex];
+            tempCopy[maxIndex] = temp;
+
+            Console.WriteLine($"{i + 1}. {tempCopy[i]}");
         }
     }
 
@@ -204,48 +219,5 @@ public class Sorter
         Console.WriteLine($"Кількість копіювань:      {Stats.Copies}");
         Console.WriteLine($"Рекурсивних викликів:     {Stats.RecursiveCalls}");
         Console.WriteLine($"Час виконання:            {Stats.ExecutionTimeMs} мс");
-    }
-
-    public void FindPatientsByLetter(char letter)
-    {
-        Console.WriteLine($"\nПацієнти на літеру '{letter}':");
-        bool found = false;
-        for (int i = 0; i < collection.Count; i++)
-        {
-            if (collection[i].LastName.StartsWith(letter.ToString(), StringComparison.OrdinalIgnoreCase))
-            {
-                Console.WriteLine(collection[i].ToString());
-                found = true;
-            }
-        }
-        if (!found) 
-        {
-            Console.WriteLine("Таких пацієнтів не знайдено.");
-        }
-    }
-
-    public void CountPatientsByDistrict()
-    {
-
-        Dictionary<string, int> districtCounts = new Dictionary<string, int>();
-
-        for (int i = 0; i < collection.Count; i++)
-        {
-            string district = collection[i].District;
-            if (districtCounts.ContainsKey(district))
-            {
-                districtCounts[district]++;
-            }
-            else
-            {
-                districtCounts.Add(district, 1);
-            }
-        }
-
-        Console.WriteLine("\nСтатистика по районах:");
-        foreach (KeyValuePair<string, int> kvp in districtCounts)
-        {
-            Console.WriteLine($"Район: {kvp.Key} | Кількість: {kvp.Value}");
-        }
     }
 }
