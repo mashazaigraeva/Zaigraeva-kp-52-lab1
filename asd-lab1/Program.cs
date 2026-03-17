@@ -14,8 +14,9 @@
             Console.WriteLine("5. Вивести поточний список");
             Console.WriteLine("6. Відсортувати список за спаданням ваги (QuickSort)");
             Console.WriteLine("7. Вивести статистику сортування");
-            Console.WriteLine("8. Вивести топ-5 пасажирів із найбільшим багажем");
-            Console.WriteLine("9. Вивести пасажирів, що перевищили норму багажу (понад 20 кг)");
+            Console.WriteLine("8. Вивести пасажирів, чий багаж вийшов за норму");
+            Console.WriteLine("9. Вивести топ-5 пасажирів із найбільшим багажем");
+            Console.WriteLine("10. Вивести пасажирів, чий багаж понад 20 кг");
             Console.WriteLine("0. Вихід");
             Console.Write("Оберіть дію: ");
 
@@ -33,7 +34,6 @@
             else if (choice == "3")
             {
                 ConsoleUsing.AddRecordMenu(sorter);
-                Console.WriteLine("Пасажира додано.");
             }
             else if (choice == "4")
             {
@@ -53,11 +53,15 @@
             }
             else if (choice == "8")
             {
-                sorter.PrintTop5Heaviest();
+                sorter.ExceededNormPassengers();
             }
             else if (choice == "9")
             {
-                sorter.PrintOverWeightPassengers();
+                sorter.Top5Heaviest();
+            }
+            else if (choice == "10")
+            {
+                sorter.MoreThan20kgPassengers();
             }
             else if (choice == "0")
             {
@@ -65,7 +69,7 @@
             }
             else
             {
-                Console.WriteLine("Такий вибір недоступний.");
+                Console.WriteLine("Такий вибір непередбачений.");
             }
         }
     }

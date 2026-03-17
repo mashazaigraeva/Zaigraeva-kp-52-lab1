@@ -1,7 +1,6 @@
 public class Sorter
 {
     private List<Record> collection;
-    private List<string> intermediateSteps;
     public SortStatistics Stats { get; set; }
 
     public Sorter()
@@ -13,7 +12,6 @@ public class Sorter
     public void InitCollection()
     {
         collection = new List<Record>();
-        intermediateSteps = new List<string>();
         Stats.Reset();
     }
 
@@ -33,7 +31,7 @@ public class Sorter
                 return;
             }
         }
-        Console.WriteLine("Пасажира з такою броню не знайдено.");
+        Console.WriteLine("Пасажира з такою бронню не знайдено.");
     }
 
     public void PrintCollection()
@@ -53,7 +51,7 @@ public class Sorter
     public void GenerateControlData()
     {
         InitCollection();
-        AddRecord(new Record("A102", "Шевченко", "Бізнес", 20.5));
+        AddRecord(new Record("A102", "Шевченко", "Бізнес", 22.5));
         AddRecord(new Record("B103", "Франко", "Економ", 5.0));
         AddRecord(new Record("C104", "Українка", "Перший", 15.0));
         AddRecord(new Record("A105", "Коцюбинський", "Економ", 10.0));
@@ -62,7 +60,7 @@ public class Sorter
         AddRecord(new Record("A108", "Симоненко", "Перший", 12.3));
         AddRecord(new Record("B109", "Костенко", "Перший", 18.0));
         AddRecord(new Record("C110", "Грушевський", "Економ", 15.0));
-        AddRecord(new Record("A111", "Довженко", "Економ", 22.2));
+        AddRecord(new Record("A111", "Довженко", "Економ", 20.1));
         AddRecord(new Record("B112", "Хмельницький", "Бізнес", 16.7));
         Console.WriteLine("Контрольні дані згенеровано.");
     }
@@ -75,7 +73,6 @@ public class Sorter
         }
         
         Stats.Reset();
-        intermediateSteps.Clear();
 
         DateTime startTime = DateTime.Now;
         QuickSortRecursive(collection, 0, collection.Count - 1);
@@ -142,7 +139,42 @@ public class Sorter
         return false;
     }
 
-    public void PrintOverWeightPassengers()
+    public void ExceededNormPassengers()
+    {
+        Console.WriteLine("Пасажири, що перевищили норму багажу для свого класу:");
+        bool found = false;
+
+        for (int i = 0; i < collection.Count; i++)
+        {
+            double limit = 0;
+            string seatClass = collection[i].SeatClass.ToUpper();
+
+            if (seatClass == "ECONOMY" || seatClass == "ЕКОНОМ")
+            {
+                limit = 20.0;
+            }
+            else if (seatClass == "BUSINESS" || seatClass == "БІЗНЕС")
+            {
+                limit = 30.0;
+            }
+            else
+            {
+                limit = 40.0;
+            }
+
+            if (collection[i].BaggageWeight > limit)
+            {
+                Console.WriteLine($"{collection[i]} (Норма: {limit} кг)");
+                found = true;
+            }
+        }
+
+        if (!found)
+        {
+            Console.WriteLine("Пасажирів із перевищенням норми не знайдено.");
+        }
+    }
+    public void MoreThan20kgPassengers()
     {
         Console.WriteLine("Пасажири, що перевищили норму багажу (понад 20 кг):");
         bool found = false;
@@ -160,7 +192,7 @@ public class Sorter
         }
     }
 
-    public void PrintTop5Heaviest()
+    public void Top5Heaviest()
     {
         Console.WriteLine("Топ-5 пасажирів із найбільшим багажем:");
         if (collection.Count == 0)

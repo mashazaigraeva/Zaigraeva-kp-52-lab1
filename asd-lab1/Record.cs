@@ -15,6 +15,6 @@ public class Record
 
     public override string ToString()
     {
-        return $"Бронь: {ReservationCode} | Прізвище: {PassengerSurname} | Клас: {SeatClass} | Вага багажу: {BaggageWeight}";
+        return $"Бронь: {ReservationCode} | Прізвище: {PassengerSurname} | Клас: {SeatClass} | Вага багажу: {BaggageWeight} кг";
     }
 }

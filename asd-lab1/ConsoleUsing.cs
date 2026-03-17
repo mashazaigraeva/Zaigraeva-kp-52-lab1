@@ -8,25 +8,36 @@ public static class ConsoleUsing
             string code = Console.ReadLine();
             if (code == null || code.Length == 0)
             {
-                throw new Exception("Помилка: Код броні не може бути порожнім.");
+                throw new Exception("Код броні не може бути порожнім");
             }
 
             Console.Write("Введіть прізвище пасажира: ");
             string surname = Console.ReadLine();
             if (surname == null || surname.Length == 0)
             {
-                throw new Exception("Помилка: Прізвище не може бути порожнім.");
+                throw new Exception("Прізвище не може бути порожнім");
             }
 
             Console.Write("Введіть клас місця (Економ, Бізнес, Перший): ");
             string seatClass = Console.ReadLine();
+            if (seatClass == null || seatClass.Length == 0)
+            {
+                throw new Exception("Кожен квиток має містити клас місця");
+            }
+            string classUpper = seatClass.ToUpper();
+            if (classUpper != "ECONOMY" && classUpper != "ЕКОНОМ" && 
+                classUpper != "BUSINESS" && classUpper != "БІЗНЕС" && 
+                classUpper != "FIRST" && classUpper != "ПЕРШИЙ")
+            {
+                throw new Exception("Обирайте що дають");
+            }
 
             Console.Write("Введіть вагу багажу (у кг): ");
             string weightInput = Console.ReadLine().Replace('.', ',');
             double weight = double.Parse(weightInput);
             if (weight < 0)
             {
-                throw new Exception("Помилка: Вага багажу не може бути від'ємною.");
+                throw new Exception("Вага багажу не може бути від'ємною");
             }
 
             sorter.AddRecord(new Record(code, surname, seatClass, weight));
